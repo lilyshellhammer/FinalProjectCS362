@@ -16,6 +16,8 @@
  */
 
 
+import java.util.Arrays;
+
 import junit.framework.TestCase;
 
 
@@ -237,10 +239,79 @@ public class UrlValidatorTest extends TestCase {
    
    public void testIsValid()
    {
-	   for(int i = 0;i<10000;i++)
+	   
+	   System.out.println("\nUnit Testing");
+
+	   int totalTests = 0;
+	   int failedTests = 0;
+	   boolean actual; //for testing the correctness of UrlValidator
+	   
+	   //get all parts of url
+	   String[] schemes = getSchemes();
+	   String[] authorities = getAuthorities();
+	   String[] ports = getPorts();
+	   String[] path = getPath();
+	   String[] queries = getQueries();
+	   
+	   //make arrays for bad parts of URL
+	   
+	   String[] badSchemes = {"https:/", "ht3://", "https//:", "http:/s"};;			   
+	   String[] badAuthorities = {"www,google,com", "httpd.apache.org", "google..com", "256.256.256.256", "", ".." };		   
+	   String[] badPorts = {":-1", ":-555"}; 
+	   String[] badPath = {"./home", "/ho/me/", "//home", "/\\home", "/home/../"};
+	   String[] badQueries = {"?action=viewmode=edit", "action?=view", "?action=edit"};
+	   
+	   UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+	   int j = 0;
+	   for(int i = 0;i<100000;i++)
 	   {
+		   /*Generate random URL*/
+		   String urlToTest = "";
 		   
+		   
+		   //get random scheme, authority, port, path, and query
+		   int schemesIndex = (int) (Math.random() * schemes.length);
+		   int authoritiesIndex = (int)(Math.random() * authorities.length);
+		   int portsIndex = (int)(Math.random() * ports.length);
+		   int pathIndex = (int)(Math.random() * path.length);
+		   int queriesIndex = (int)(Math.random() * queries.length);
+
+		   //set up URL to test
+		   urlToTest = urlToTest + schemes[schemesIndex] + authorities[authoritiesIndex]
+				   + ports[portsIndex] + path[pathIndex] + queries[queriesIndex]; 
+		   
+		   
+		   /*Test the URL*/
+		   boolean expected = true;
+		   
+		   //check if any part of the URL is false, if yes than expected is false
+		   if (Arrays.asList(badSchemes).contains(schemes[schemesIndex]))
+			   expected = false;
+		   if (Arrays.asList(badAuthorities).contains(authorities[authoritiesIndex]))
+			   expected = false;
+		   if (Arrays.asList(badPorts).contains(ports[portsIndex]))
+			   expected = false;
+		   if (Arrays.asList(badPath).contains(path[pathIndex]))
+			   expected = false;
+		   if (Arrays.asList(badQueries).contains(queries[queriesIndex]))
+			   expected = false;
+		   
+		   //test the url
+		   actual = urlVal.isValid(urlToTest);
+		   
+		   // see if expected and actual match up
+		   //if no, add to total failed and print out URL
+		   if (expected != actual) {
+			   failedTests++; //add one to failed counter
+			   System.out.println("Url: " + urlToTest + " Expected: " + expected + " Actual: " + actual);
+		   }   
+		   //if yes, move on
+		   
+		   //add to total tests run
+		   totalTests++;
 	   }
+	   
+	   System.out.println("Total tests: " + totalTests + " Failed tests: " + failedTests);
    }
    
    public void testAnyOtherUnitTest()
