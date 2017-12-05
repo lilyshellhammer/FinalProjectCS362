@@ -258,7 +258,7 @@ public class UrlValidatorTest extends TestCase {
 	   String[] badSchemes = {"https:/", "ht3://", "https//:", "http:/s"};;			   
 	   String[] badAuthorities = {"www,google,com", "httpd.apache.org", "google..com", "256.256.256.256", "", ".." };		   
 	   String[] badPorts = {":-1", ":-555"}; 
-	   String[] badPath = {"./home", "/ho/me/", "//home", "/\\home", "/home/../"};
+	   String[] badPath = {"./home", "//home", "/\\home", "/home/../"};
 	   String[] badQueries = {"?action=viewmode=edit", "action?=view", "?action=edit"};
 	   
 	   UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
